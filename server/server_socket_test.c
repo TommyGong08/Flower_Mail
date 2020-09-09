@@ -15,14 +15,15 @@
 #define  SERVER_PORT  5789
 #define  LISTEN_QUEUE_LENGTH 10
 #define  BUFFER_SIZE 100
-
+#define INET_ADDRESS  "101.200.180.91"
 int main()
 {
   //设置一个socket地址结构server_addr,代表服务器internet地址, 端口
   struct sockaddr_in server_addr;
   bzero (&server_addr, sizeof (server_addr));	//把一段内存区的内容全部设置为0
   server_addr.sin_family = AF_INET;                               //IPV4地址
-  server_addr.sin_addr.s_addr = inet_addr("10.194.42.68");   
+  server_addr.sin_addr.s_addr = inet_addr(INET_ADDRESS);   
+  //server_addr.sin_addr.s_addr = htons (INADDR_ANY);
   server_addr.sin_port = htons(SERVER_PORT);          //端口设置
 
   //创建一个套接字
