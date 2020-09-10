@@ -29,11 +29,6 @@ int Update(char* Rescmd)
 
 }
 
-int Delete(char* Rescmd)
-{
-
-}
-
 int RecFile(char* Rescmd , int socket)
 {
 

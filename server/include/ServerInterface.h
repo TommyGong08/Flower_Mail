@@ -1,4 +1,4 @@
-#ifndef  SERVERLIB_H
+#ifndef  SERVERINTERFACE_H
 #define SERVERLIB_H
 
 int Select(char*  Rescmd , char* buffer);
