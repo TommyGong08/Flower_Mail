@@ -1,7 +1,7 @@
 #ifndef  MYSQLLIB_H
 #define MYSQLLIB_H
 
-#include "mysql.h"
+#include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
 
