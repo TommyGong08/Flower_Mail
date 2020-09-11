@@ -30,11 +30,13 @@ typedef struct MailInfo
   int      EmailType ;                                                                   //邮件类型 ： -2草稿，-1抄送，0发送，1收件，（2密送)
   int      EmailState;                                                                    //邮件状态 ：0保留，-1已读，1未读
   int     EmailContent[LONG_CONTENT_SIZE];            //邮件内容
-  char  EmailSender[SHORT_CONTENT_SIZE];           //
-  char  EmailReceiver[SHORT_CONTENT_SIZE];
+  char  EmailSender[SHORT_CONTENT_SIZE];           //邮件发送者
+  char  EmailReceiver[SHORT_CONTENT_SIZE];        //邮件接受者
+  char  CopySendID[LONG_CONTENT_SIZE];               //抄送用户ID，以分号作为分割
+  char  SecretSendID[LONG_CONTENT_SIZE];             //密送用户ID，以分号作为分割
   char  EmailSystemTime[SHORT_CONTENT_SIZE];  //邮件发送、接受、恢复、草稿等用同一个系统时间
   char   AttachFilePath[SHORT_CONTENT_SIZE];        // 附件存储路径
-}MainInfo;
+}MailInfo;
 
 
 
