@@ -44,7 +44,7 @@ int RecAttachFile(char* Rescmd , int socket)
 
 }
 
-int RecSendAttachFile(char* Rescmd , int socket)
+int SendAttachFile(char* Rescmd , int socket)
 {
 
 }

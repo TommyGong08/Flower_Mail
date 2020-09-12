@@ -12,6 +12,6 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd);
 int RecLoginResFromServer();
 
 //登陆成功后创建本地文件夹
-int CreaterUserFolder(char* s);
+int CreaterUserFolder(char* UserName);
 
 #endif

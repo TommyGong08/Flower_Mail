@@ -2,12 +2,13 @@
 #define RECEIRVEMODULE_H
 #include "Struct.h"
 #include"ClientSocket.h"
+#define GET_MAIL_LIST 100
 
 //收件箱模块
-int ChangeEmailState(char * EmailID,int EmailState);
-int  DeleteServerEmail(char * EmailID);
-int GetServerEmail(MailInfo* NewMail,char * UserID);
-int GetAttanchEmail(char* EmailID);
-int ReplyEmail();
+int ChangeEmailState(char * EmailID);
+int DeleteServerEmail(char * EmailID);
+int GetServerEmail(char* UserID , char* GetMailList[GET_MAIL_LIST] , int &num);
+int GetAttachEmail(char* EmailID);
+int ReplyEmail(); //lqy负责
 
 #endif
