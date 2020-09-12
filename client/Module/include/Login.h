@@ -2,6 +2,7 @@
 #define LOGIN_H
 #include"ClientSocket.h"
 
+
 //判断输入的字符串
 int CheckLoginInput(char* UserName, char* PsWd);
 

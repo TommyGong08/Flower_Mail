@@ -1,3 +1,8 @@
+/* 
+
+author:陈汩鸿
+
+*/
 #include<stdio.h>
 #include<string.h>
 #include"MySqlLib.h"
