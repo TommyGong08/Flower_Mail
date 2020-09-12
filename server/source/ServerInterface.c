@@ -4,7 +4,7 @@ author:陈汩鸿
 
 */
 #include "MySqlLib.h"
-#include "ServerLib.h"
+#include "ServerInterface.h"
 #include <netinet/in.h>		
 #include <sys/types.h>			
 #include <sys/socket.h>		
