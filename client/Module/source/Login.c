@@ -39,13 +39,27 @@ int RecLoginResFromServer()
 
 }
 
-//登陆成功后创建本地文件夹
-int CreaterUserFolder(char* UserName)
+//用户登陆成功后创建文件夹,用于保存草稿
+int CreateUserFolder(char *userID)
 {
+  char buffer[80];
+	char dBuffer[85];//草稿箱路径
+	char ABuffer[85];//附件存储
 
+	memset(buffer, '\0', 80);
+	memset(dBuffer, '\0', 105);
+	memset(ABuffer,'\0',85);
+	//获取执行程序当前路径
+	getcwd(buffer, sizeof(buffer));
+	//data文件夹
+	sprintf(dBuffer, "../user/%s/draft", userID);
+	sprintf(ABuffer,"../user/%s/attach",userID);
+	
+	//创建user/userID/draft 文件夹
+	mkdir(dBuffer, 0755);
+	mkdir(ABuffer,0755);
+
+	return 0;
 }
 
-int CreateUserFolder(char *userName)
-{
 
-}

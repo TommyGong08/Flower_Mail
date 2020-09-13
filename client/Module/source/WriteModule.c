@@ -48,7 +48,7 @@ int LeadinDraft(UserInfo* userInfo , char* text)
   FILE* fp = NULL;
   char buffer[FILE_BUFFER_SIZE];
   char path[50];
-  sprintf(path,"../user/%s.draft",userInfo->UserName);
+  sprintf(path,"../user/%s/draft/%s.txt",userInfo->UserName , userInfo->UserName);
   printf("\n%s\n",path);
   fp = open(path,"r");
   if(fp == NULL){
@@ -68,12 +68,13 @@ int LeadinDraft(UserInfo* userInfo , char* text)
 }
 
 //从本地得到附件,读取到text中
-int GetAttachFile(char* AtthachFilePath, char* text)
+int LeadinAttachFile(char* AtthachFilePath, char* text)
 {
   FILE* fp = NULL;
   char buffer[FILE_BUFFER_SIZE];
   char path[50];
   sprintf(path,"%s",AtthachFilePath);
+  //path为文件路径
   printf("\n%s\n",path);
   fp = open(path,"r");
   if(fp == NULL){
@@ -114,14 +115,43 @@ int SaveAttachFile(MailInfo* EmainInfo , char* text)
    return 0;
 }
 
-//socket发送附件
-int SendAttachFile()
+//socket发送附件,传入参数,
+int SendAttachFile(char* emailID, char* attachFilePath)
 {
-
+   char buffer[BUFFER_SIZE]={0};
+   char text[BUFFER_SIZE] = {0};
+	int length=0;
+  int client_socket=0;
+  if(attachFilePath == NULL ){
+		return -1;
+  }
+  int GetAttach = LeadinAttachFile(attachFilePath ,&text);//&text这里可能有bug
+  if(GetAttach == 0){
+     printf("get attached  file Success!");
+  }else{
+     printf("get attached file Failed!");
+     return -1;
+  }
+	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
+	sprintf(buffer,"AttachCliToSer|AttachCliToSer|%s|%s#" , emailID , text);
+	printf ("send message to server:%s\n",buffer);
+	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
+		return -2;
+  }
+  bzero(buffer, BUFFER_SIZE);
+  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  if(length<0){
+    printf("can't receive message from server!\n");
+  }else{
+    	printf("receive message from server: %s \n",buffer);
+  }
+  close_socket(client_socket);
+  return length;  
 }
 
 int SendEmail(MailInfo*  EmailInfo, char* text)
 {
 //要发送常规邮件、附件、抄送、密送
-
+   //判断邮件类型，如果有附件
+   SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
 }
