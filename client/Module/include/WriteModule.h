@@ -11,16 +11,12 @@ int SaveDraft(UserInfo* userInfos , char* text);
 int LeadinDraft(UserInfo* userInfo , char* text);
 //从本地得到附件
 int GetAttachFile(char* AttachFilePath , char* text);
-
 //保存附件内容,传入参数为文本text
-int SaveAttachFile(MailInfo* EmainInfo , char* text);
-
+int SaveAttachFile(char* UserID,char* EmailID , char* text);
 //socket发送附件
 int SendAttachFile();
-
 //socket接受附件
 int RecvAttachFile();
-
 //发送邮件
 int SendEmail(MailInfo*  EmailInfo, char* text);
 

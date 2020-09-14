@@ -26,7 +26,7 @@ int SaveDraft(UserInfo* userInfo , char* text)
 {
    FILE* fp = NULL;
    char path[50];
-   sprintf(path,"../user/draft/%s.txt",userInfo->UserName);
+   sprintf(path,"../data/draft/%s.txt",userInfo->UserName);
    printf("\n%s\n",path);
    fp=fopen(path,"w");
    if(fp==NULL){
@@ -95,11 +95,11 @@ int LeadinAttachFile(char* AtthachFilePath, char* text)
 }
 
 //保存附件内容,传入参数为文本text
-int SaveAttachFile(MailInfo* EmainInfo , char* text)
+int SaveAttachFile(char* UserID,char* EmailID , char* text)
 {
     FILE* fp = NULL;
    char path[50];
-   sprintf(path,"../user/attach/%s.txt",EmainInfo->EmailID);
+   sprintf(path,"../data/%s/attach/%s.txt",UserID,EmailID);
    printf("\n%s\n",path);
    fp=fopen(path,"w");
    if(fp==NULL){
@@ -115,7 +115,7 @@ int SaveAttachFile(MailInfo* EmainInfo , char* text)
    return 0;
 }
 
-//socket发送附件,传入参数,
+//socket发送附件,传入参数为本地附件地址
 int SendAttachFile(char* emailID, char* attachFilePath)
 {
    char buffer[BUFFER_SIZE]={0};
@@ -142,16 +142,59 @@ int SendAttachFile(char* emailID, char* attachFilePath)
   length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+    return -1;
   }else{
     	printf("receive message from server: %s \n",buffer);
-  }
+  }         
   close_socket(client_socket);
-  return length;  
+  return 0;  
 }
 
 int SendEmail(MailInfo*  EmailInfo, char* text)
 {
-//要发送常规邮件、附件、抄送、密送
+   //要发送常规邮件、附件、抄送、密送
+   char buffer[FILE_BUFFER_SIZE]={0};
+	int length=0;
+	char* msg=NULL;
+	int client_socket=0;
+   if(EmailInfo->IfAttachFile == 0)//有附件
+   {
+       sprintf(buffer,"EmailCliToSer|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|^",
+                                 EmailInfo->EmailID,EmailInfo->EmailTheme,EmailInfo->EmailPath,EmailInfo->EmailType,
+                                 EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
+                                 EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,EmailInfo->EmailReceiver,text);
+   }else if(EmailInfo->IfAttachFile == -1){
+      sprintf(buffer,"EmailCliToSer|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+                                 EmailInfo->EmailID,EmailInfo->EmailTheme,EmailInfo->EmailPath,EmailInfo->EmailType,
+                                 EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
+                                 EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,EmailInfo->EmailReceiver,text);
+   }
+	client_socket= connect_socket(SERVER_IP,SERVER_PORT);   
+      
+	printf ("string sended to server:%s\n",buffer);
+	length=send_msg(client_socket,buffer,FILE_BUFFER_SIZE);
+   if(length<0){
+      printf("send Email Failed!\n");
+		return -1;
+   }
+	bzero (buffer, FILE_BUFFER_SIZE);
+   printf("SERVERIP=%s   SERVERPORT=%d",SERVER_IP,SERVER_PORT);
+	length = recv_msg(client_socket,buffer,FILE_BUFFER_SIZE);//从服务器端接受到emailId
+   if(length < 0){
+      printf("can't receive message from server!\n");
+      return -1;
+   }
+   int send_attachfile = 0;
    //判断邮件类型，如果有附件
-   SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
+   if(EmailInfo->IfAttachFile==0){
+       send_attachfile = SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
+       if(send_attachfile < 0){
+          printf("send attached file Failed!\n");
+          return -1;
+       }else{
+          printf("send attached file success!\n");
+       }
+   }
+ close_socket(client_socket);
+return 0;
 }

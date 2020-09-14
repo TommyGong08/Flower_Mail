@@ -5,10 +5,16 @@
 #define GET_MAIL_LIST 100
 
 //收件箱模块
+
+//分解收件buffer
+int GetServerStringDisintergrate(char* string);
+//改变邮件状态
 int ChangeEmailState(char * EmailID , int emailState);
+//删除邮件
 int DeleteServerEmail(char * EmailID);
-int GetServerEmail(char* UserID , char* GetMailList[GET_MAIL_LIST] , int &num);
-int GetAttachEmail(char* EmailID);
-int ReplyEmail(); //lqy负责
+//从服务端和数据库获取附件内容
+int GetAttachEmail(char* UserID,char* EmailID);
+//从服务端和数据库获取邮件
+int GetServerEmail(char* UserID);
 
 #endif

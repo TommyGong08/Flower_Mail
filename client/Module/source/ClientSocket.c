@@ -34,7 +34,7 @@ int connect_socket(char* server,int serverPort)
     addr.sin_port=htons(serverPort);
     addr.sin_addr.s_addr=inet_addr(server);
     //如果输入的是域名
-    if(addr.sin_addr.s_addr == INADDR_NONE )
+    if(addr.sin_addr.s_addr == INADDR_NONE)
     {
          phost= (struct hostent*)gethostbyname(server);
 	 if(phost == NULL)
@@ -84,7 +84,7 @@ int  recv_msg(int sockfd,char* buffer,int bufflength)
     }
     //printf("buffer:%d\n",buffer);
     buffer[flag]='\0';
-    return flag;
+    return 0;
 }
 
 int close_socket(int sockfd)

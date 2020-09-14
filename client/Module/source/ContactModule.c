@@ -19,11 +19,13 @@ author：龚海龙
 #include <arpa/inet.h>
 #include <errno.h>
 
-//解析通讯录字符串
-int StringDisintergrate(char* string)
+/*解析通讯录字符串
+字符串以“|”分隔开
+int StringDisintergrate(char* string )
 {
   
 }
+*/
 
 //获得通讯录信息
 int GetContactInfo(char * UserID)
@@ -44,6 +46,7 @@ int GetContactInfo(char * UserID)
   length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+    return -1;
   }else{
     printf("receive message from server: %s \n",buffer);
     //解析字符串buffer   ：  以“Tom|Mary|Jack|”的方式分隔开
@@ -53,7 +56,7 @@ int GetContactInfo(char * UserID)
     }
   }
   close_socket(client_socket);
-  return length;
+  return 0;
 }
 
 //添加通讯录好友
@@ -66,7 +69,7 @@ int AddContact (char* UserID , char* FriendID)
 		return -1;
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"insert|insert into ContactTable(UserID,FriendID )values('%s','%s')",UserID,FriendID);
+	sprintf(buffer,"insert|INSERT INTO ContactTable(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -2;
@@ -75,11 +78,12 @@ int AddContact (char* UserID , char* FriendID)
   length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+    return -1;
   }else{
     	printf("receive message from server: %s \n",buffer);
   }
   close_socket(client_socket);
-  return length;  
+  return 0;  
 }
 
 //删除通讯录好友
@@ -92,18 +96,19 @@ int DeleteContact (char* UserID,int FriendID)
 		return -1;
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"delete|delete from UserTable Where UserId = '%s' and FriendID = '%s'",UserID,FriendID);
+	sprintf(buffer,"delete|DELETE FROM UserTable WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
-		return -2;
+		return -1;
   }
   bzero (buffer, BUFFER_SIZE);
   length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+    return -1;
   }else{
     	printf("receive message from server: %s \n",buffer);
   }
   close_socket(client_socket);
-  return length;  
+  return 0;  
 }

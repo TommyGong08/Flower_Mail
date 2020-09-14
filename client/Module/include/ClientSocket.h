@@ -8,5 +8,4 @@ int send_msg(int socket,char* sendBuff,int length);
 int recv_msg(int socket,char* buffer,int bufflength);
 int close_socket(int socket);
 
-
 #endif

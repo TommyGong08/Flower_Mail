@@ -21,44 +21,198 @@ author: 姜瑜
 #include <arpa/inet.h>
 #include <errno.h>
 
+
+/*
+author        :		姜渝
+
+function name :		CheckLoginInput
+
+description   :		在客户端本地判断用户输入的帐号及密码是否合法,并弹出错误提示
+
+Parameter     :		char *UserName,char* PsWd
+
+return value  :		0 成功
+					1 帐户ID非法
+						Checkresult（string）输出错误提示
+						1） 用户名长度不对
+						2） 用户名首位为数字
+						3） 用户名包含非法字符
+					2 密码非法
+						1） 密码长度不对
+						2） 密码包含非法字符
+						3） 密码不包含两种字符
+
+*/
 //判断输入的字符串
 int CheckLoginInput(char* UserName, char* PsWd)
 {
-
+	// 用户名长度6-20位，由数字，字母，下划线组成，且不能以数字开头，字母不区分大小写。
+	// 密码长度为6-20位，由数字，字母，下划线组成，且至少包含两种及以上字符，字母区分大小写。
+	int iPasswdLength;
+	int iUserIdLength;
+	int i;
+	iUserIdLength = strlen(UserName);
+	iPasswdLength = strlen(PsWd);
+	//遍历分析用户输入的用户名字符
+	if (iUserIdLength < 6 || iUserIdLength > 20){
+		return 1;//帐户ID非法
+	}
+	if (UserName[0] >= '0' && UserName[0] <= '9'){
+		return 1;
+	}
+	for (i = 0; i < iUserIdLength; i++){
+		if ((UserName[i] >= '0' && UserName[i] <= '9') || 
+					(UserName[i] >= 'a' && UserName[i] <= 'z') || 
+					(UserName[i] >= 'A' && UserName[i] <= 'Z') || 
+					UserName[i] == '_'){
+			continue;
+		}else{
+			return 1;
+		}
+	}
+	//密码长度判断
+	//设定密码长度为6-20
+	if (iPasswdLength < 6 || iPasswdLength > 20){
+		return 2;//密码非法
+	}
+	//遍历分析用户输入的密码字符
+	int flag = 0; //记录字符种数
+	int flag_num = 0;
+	int flag_a = 0;
+	int flag__ = 0;
+	for (i = 0; i < iPasswdLength; i++)
+	{
+		if (PsWd[i] >= '0' && PsWd[i] <= '9')//数字
+		{
+			if (!flag_num) { flag += 1; }
+			flag_num++;
+			continue;
+		}else if (PsWd[i] >= 'a' && PsWd[i] <= 'z')//小写字母
+		{
+			if (!flag_a) { flag += 1; }
+			flag_a++;
+			continue;
+		}else if (PsWd[i] >= 'A' && PsWd[i] <= 'Z')//大写字母
+		{
+			if (!flag_a) { flag += 1; }
+			flag_a++; //大小写字母都记作字母 flag_a计数
+			continue;
+		}else if (PsWd[i] == '_'){
+			if (!flag__) { flag += 1; }
+			flag__++;
+			continue;
+		}else{
+			return 2; //密码不合法
+		}
+	}
+	if (flag < 2){
+		return 2; //密码不合法
+	}
+	return 0;
 }
 
-//将登陆的用户信息发送给服务器
+/*
+author        :		姜渝
+
+function name :		SendUserInfoToServer
+
+description   :		将用户登录信息发送到服务端
+				    
+
+Parameter     :		char *UserName,char* PsWd
+
+return value  :		0 发送成功
+				    -1 调用socket失败
+
+*/
 int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 {
-
+	int sendResult1;//用户名密码匹配结果
+	int sendResult2;//用户名查询结果
+	char buffer1[LONG_CONTENT_SIZE];//ID+Passwd
+	char receBuffer[LONG_CONTENT_SIZE];
+	memset(buffer1, '\0', LONG_CONTENT_SIZE);
+	memset(receBuffer, '\0', LONG_CONTENT_SIZE);
+	//数据库操作
+	char event[10] = "select";//选择
+	int isocketfd = 0;
+	isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
+	//查询用户名与密码是否匹配
+	sprintf(buffer1, "select|SELECT state FROM UserTable WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);
+	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
+	//发送失败
+	if (sendResult1<0){
+		return -1;
+	}
+	recv_msg(isocketfd, receBuffer, LONG_CONTENT_SIZE);
+	int state = -1;
+	int nItem=0;  //字段数
+	char username[25];   //存储用户名
+	int i = 0;
+	int j = 0;
+	memset(username, '\0', 25);
+	//对获取的字符流进行处理
+	int flag = 0;  //flag = 0表示用户名还没录入结束,即尚未出现|
+	//假设receBuffer格式如：1#
+	printf("receive message: %s\n", receBuffer);
+	if(receBuffer[0]=='1'){
+		printf("Login Success!\n");
+		return -1;
+	}else if(receBuffer[0]=='0'){
+		printf("already Login!\n");
+	}
+	close_socket(isocketfd);
+	return 0;
 }
 
-//客户端接受服务器返回的登陆指令，登陆成功在本地创建文件夹
-int RecLoginResFromServer()
+//创建文件夹函数
+int MakeDirectory(const char* FileName)
 {
-
+	char DirName[256];
+	strcpy(DirName,FileName);
+	int i=0 ,len = strlen(DirName);
+	for(int i=1;i<len;i++){
+		if(DirName[i] == '/'){
+			DirName[i]=0;
+			if(access(DirName,0)!=0){
+				if((mkdir(DirName,0755))==-1){
+					printf("Problem creating directory : %s\n",FileName);
+					return -1;
+				}
+			}
+			DirName[i] = '/';
+		}
+	}
+	printf("Directory was successfully created!\n");
+	return 0;
 }
 
-//用户登陆成功后创建文件夹,用于保存草稿
+//用户登陆成功后创建两个文件夹，分别用于存放草稿和下载的附件
 int CreateUserFolder(char *userID)
 {
   char buffer[80];
-	char dBuffer[85];//草稿箱路径
-	char ABuffer[85];//附件存储
+	char draftbuffer[85];//草稿箱路径
+	char attachbuffer[85];//附件存储
 
 	memset(buffer, '\0', 80);
-	memset(dBuffer, '\0', 105);
-	memset(ABuffer,'\0',85);
+	memset(draftbuffer, '\0', 105);
+	memset(attachbuffer,'\0',85);
 	//获取执行程序当前路径
 	getcwd(buffer, sizeof(buffer));
 	//data文件夹
-	sprintf(dBuffer, "../user/%s/draft", userID);
-	sprintf(ABuffer,"../user/%s/attach",userID);
+	sprintf(draftbuffer, "../data/%s/draft", userID);
+	sprintf(attachbuffer,"../data/%s/attach",userID);
 	
 	//创建user/userID/draft 文件夹
-	mkdir(dBuffer, 0755);
-	mkdir(ABuffer,0755);
-
+	int make_draftfile = MakeDirectory(draftbuffer);
+	if(make_draftfile< 0){
+			printf("make draft file failed\n!");
+	}else{
+		printf("make draft file success!");
+	}
+	int MakeDirectory(attachbuffer);
+	//mkdir(dbuffer, 0755);
+	//mkdir(Abuffer,0755);
 	return 0;
 }
 
