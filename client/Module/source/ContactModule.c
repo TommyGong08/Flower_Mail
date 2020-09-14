@@ -28,7 +28,7 @@ int StringDisintergrate(char* string )
 */
 
 //获得通讯录信息
-int GetContactInfo(char * UserID)
+int GetContactInfo(char * UserID,char* text)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;

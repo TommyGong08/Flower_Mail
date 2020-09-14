@@ -46,7 +46,7 @@ return value  :		0 成功
 //判断输入的字符串
 int CheckLoginInput(char* UserName, char* PsWd)
 {
-	// 用户名长度6-20位，由数字，字母，下划线组成，且不能以数字开头，字母不区分大小写。
+// 用户名长度6-20位，由数字，字母，下划线组成，且不能以数字开头，字母不区分大小写。
 	// 密码长度为6-20位，由数字，字母，下划线组成，且至少包含两种及以上字符，字母区分大小写。
 	int iPasswdLength;
 	int iUserIdLength;
@@ -58,7 +58,7 @@ int CheckLoginInput(char* UserName, char* PsWd)
 		return 1;//帐户ID非法
 	}
 	if (UserName[0] >= '0' && UserName[0] <= '9'){
-		return 1;
+		return -1;
 	}
 	for (i = 0; i < iUserIdLength; i++){
 		if ((UserName[i] >= '0' && UserName[i] <= '9') || 
@@ -67,13 +67,13 @@ int CheckLoginInput(char* UserName, char* PsWd)
 					UserName[i] == '_'){
 			continue;
 		}else{
-			return 1;
+			return -1;
 		}
 	}
 	//密码长度判断
 	//设定密码长度为6-20
 	if (iPasswdLength < 6 || iPasswdLength > 20){
-		return 2;//密码非法
+		return -2;//密码非法
 	}
 	//遍历分析用户输入的密码字符
 	int flag = 0; //记录字符种数
@@ -102,11 +102,11 @@ int CheckLoginInput(char* UserName, char* PsWd)
 			flag__++;
 			continue;
 		}else{
-			return 2; //密码不合法
+			return -2; //密码不合法
 		}
 	}
 	if (flag < 2){
-		return 2; //密码不合法
+		return -2; //密码不合法
 	}
 	return 0;
 }
@@ -128,17 +128,17 @@ return value  :		0 发送成功
 int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 {
 	int sendResult1;//用户名密码匹配结果
-	int sendResult2;//用户名查询结果
-	char buffer1[LONG_CONTENT_SIZE];//ID+Passwd
+	char buffer1[LONG_CONTENT_SIZE];
 	char receBuffer[LONG_CONTENT_SIZE];
 	memset(buffer1, '\0', LONG_CONTENT_SIZE);
 	memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	//数据库操作
 	char event[10] = "select";//选择
 	int isocketfd = 0;
-	isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	//查询用户名与密码是否匹配
 	sprintf(buffer1, "select|SELECT state FROM UserTable WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);
+  printf("%s\n",buffer1);
+  isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
 	//发送失败
 	if (sendResult1<0){
@@ -146,20 +146,14 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	}
 	recv_msg(isocketfd, receBuffer, LONG_CONTENT_SIZE);
 	int state = -1;
-	int nItem=0;  //字段数
-	char username[25];   //存储用户名
-	int i = 0;
-	int j = 0;
-	memset(username, '\0', 25);
-	//对获取的字符流进行处理
-	int flag = 0;  //flag = 0表示用户名还没录入结束,即尚未出现|
 	//假设receBuffer格式如：1#
 	printf("receive message: %s\n", receBuffer);
-	if(receBuffer[0]=='1'){
+	if(receBuffer[0]=='-'){
 		printf("Login Success!\n");
 		return -1;
 	}else if(receBuffer[0]=='0'){
 		printf("already Login!\n");
+    return -1;
 	}
 	close_socket(isocketfd);
 	return 0;
@@ -197,8 +191,6 @@ int CreateUserFolder(char *userID)
 	memset(buffer, '\0', 80);
 	memset(draftbuffer, '\0', 105);
 	memset(attachbuffer,'\0',85);
-	//获取执行程序当前路径
-	getcwd(buffer, sizeof(buffer));
 	//data文件夹
 	sprintf(draftbuffer, "../data/%s/draft", userID);
 	sprintf(attachbuffer,"../data/%s/attach",userID);
@@ -210,7 +202,7 @@ int CreateUserFolder(char *userID)
 	}else{
 		printf("make draft file success!");
 	}
-	int MakeDirectory(attachbuffer);
+	MakeDirectory(attachbuffer);
 	//mkdir(dbuffer, 0755);
 	//mkdir(Abuffer,0755);
 	return 0;
