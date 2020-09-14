@@ -3,8 +3,8 @@
 #define CONTACT_SIZE 100 // 100个好友
 #include"ClientSocket.h"
 
-int GetContactInfo(char * UserID,char* text);//text 为传入的字符串
+char*  GetContactInfo(char* UserID);
 int AddContact (char* UserID , char* ContactID);
-int DeleteContact (char* UserID,int ContactID);
+int DeleteContact (char* UserID,char* FriendID)
 
 #endif

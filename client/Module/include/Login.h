@@ -9,6 +9,9 @@ int CheckLoginInput(char* UserName, char* PsWd);
 //将登陆的用户信息发送给服务器
 int SendLoginUserInfoToServer(char* UserName , char* PsWd);
 
+//将退出消息发送给服务器
+int SendLoginOutInfoToServer(char* UserName , char* PsWd);
+
 //创建文件目录
 int MakeDirectory(const char* FileName);
 

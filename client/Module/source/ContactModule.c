@@ -28,39 +28,41 @@ int StringDisintergrate(char* string )
 */
 
 //获得通讯录信息
-int GetContactInfo(char * UserID,char* text)
+char*  GetContactInfo(char* UserID)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
+	char* text_pointer;
   int client_socket=0;
   if(UserID == NULL ){
-		return -1;
+	printf("UserID is NULL!");
   }
-	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"GetContactInfo|%s",UserID);
+//	strcpy(text,"FriendID1|FriendID2|FriendID3");
 	printf ("send message to server: %s\n",buffer);
+	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
-		return -2;
   }
   bzero (buffer, BUFFER_SIZE);
   length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
-    return -1;
   }else{
     printf("receive message from server: %s \n",buffer);
     //解析字符串buffer   ：  以“Tom|Mary|Jack|”的方式分隔开
-    int IfDisintergrate = StringDisintergrate(buffer);
+		 text_pointer = buffer;
+   /* int IfDisintergrate = StringDisintergrate(buffer);
     if(IfDisintergrate < 0){
       printf("Disintergrate Failed!\n");
     }
+		*/
   }
   close_socket(client_socket);
-  return 0;
+  return text_pointer;
 }
 
 //添加通讯录好友
-int AddContact (char* UserID , char* FriendID)
+int AddContact(char* UserID , char* FriendID)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
@@ -68,9 +70,9 @@ int AddContact (char* UserID , char* FriendID)
   if(UserID == NULL ){
 		return -1;
   }
-	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"insert|INSERT INTO ContactTable(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
-	printf ("send message to server:%s\n",buffer);
+	printf ("%s\n",buffer);
+	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -2;
   }
@@ -87,7 +89,7 @@ int AddContact (char* UserID , char* FriendID)
 }
 
 //删除通讯录好友
-int DeleteContact (char* UserID,int FriendID)
+int DeleteContact (char* UserID,char* FriendID)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
@@ -95,9 +97,9 @@ int DeleteContact (char* UserID,int FriendID)
   if(UserID == NULL ){
 		return -1;
   }
-	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"delete|DELETE FROM UserTable WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
 	printf ("send message to server:%s\n",buffer);
+	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
   }

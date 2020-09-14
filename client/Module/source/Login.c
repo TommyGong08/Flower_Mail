@@ -148,10 +148,10 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	int state = -1;
 	//假设receBuffer格式如：1#
 	printf("receive message: %s\n", receBuffer);
-	if(receBuffer[0]=='-'){
+	if(receBuffer[0]=='0'){
 		printf("Login Success!\n");
 		return -1;
-	}else if(receBuffer[0]=='0'){
+	}else if(receBuffer[0]=='-'){
 		printf("already Login!\n");
     return -1;
 	}
@@ -159,6 +159,40 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	return 0;
 }
 
+//将退出信息发送给服务器
+int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
+{
+		int sendResult1;//用户名密码匹配结果
+	char buffer1[LONG_CONTENT_SIZE];
+	char receBuffer[LONG_CONTENT_SIZE];
+	memset(buffer1, '\0', LONG_CONTENT_SIZE);
+	memset(receBuffer, '\0', LONG_CONTENT_SIZE);
+	//数据库操作
+	char event[10] = "select";//选择
+	int isocketfd = 0;
+	//将state设置成1，表示用户为为登陆状态
+	sprintf(buffer1, "update|update UserTable SET state = '1' WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);//
+  printf("%s\n",buffer1);
+  isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
+	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
+	//发送失败
+	if (sendResult1<0){
+		return -1;
+	}
+	recv_msg(isocketfd, receBuffer, LONG_CONTENT_SIZE);
+	int state = -1;
+	//假设receBuffer格式如：1#
+	printf("receive message: %s\n", receBuffer);
+	if(receBuffer[0]=='0'){
+		printf("Logout Success!\n");
+		return -1;
+	}else if(receBuffer[0]=='-'){
+		printf("LogOut Failed!\n");
+    return -1;
+	}
+	close_socket(isocketfd);
+	return 0;
+}
 //创建文件夹函数
 int MakeDirectory(const char* FileName)
 {
