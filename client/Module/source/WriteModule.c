@@ -77,6 +77,7 @@ int DeleteDraft(UserInfo* userInfo)
    }
 }
 
+//success
 //从本地得到附件,读取到text中,(success)
 char*  LeadinAttachFile(char* AtthachFilePath)
 {
@@ -122,40 +123,43 @@ int SaveAttachFile(char* UserID,char* EmailID , char* text)
    return 0;
 }
 
+//success
 //socket发送附件,传入参数为本地附件地址
 int SendAttachFile(char* emailID, char* attachFilePath)
 {
-   char buffer[BUFFER_SIZE]={0};
-   char* text[BUFFER_SIZE] ;
-   char text[BUFFER_SIZE] = {0};
+ int sendResult1;
+ // char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+ // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-  if(attachFilePath == NULL ){
-		return -1;
-  }
   //导入附件信息
    char* text = LeadinAttachFile(attachFilePath);//&text这里可能有bug
-	sprintf(buffer,"attachclitoser|AttachCliToSer|%s|%s#" , emailID , text);
+	sprintf(buffer,"attachclitoser|%s|%s|" , emailID , text);
 	printf ("send message to server:%s\n",buffer);
    client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
-		return -2;
-  }
+	sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
+		return -1;
+	}
   bzero(buffer, BUFFER_SIZE);
   length = recv(client_socket,buffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
-  }else{
-    	printf("receive message from server: %s \n",buffer);
-  }         
+  }
+  if(strcmp(buffer,"-1") == 0){
+    close_socket(client_socket);
+    return -1;
+  } 
   close_socket(client_socket);
   return 0;  
 }
 
+//success
 int SendEmail(MailInfo*  EmailInfo, char* text)
 {
- {
    //要发送常规邮件、附件、抄送、密送
    	char* msg=NULL;
       int sendResult1;
@@ -186,7 +190,6 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
    close_socket(client_socket);
    int send_attachfile = 0;
    //判断邮件类型，如果有附件
-   
    if(EmailInfo->IfAttachFile == 0){
        send_attachfile = SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
        if(send_attachfile < 0){
