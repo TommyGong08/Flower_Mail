@@ -29,10 +29,10 @@ typedef struct UserInfo
 typedef struct MailInfo
 {
   char  EmailWriteID[SHORT_CONTENT_SIZE];          //邮件编写者ID
-  char  EmailID[SHORT_CONTENT_SIZE];               //邮件ID
+  char  EmailID[LONG_CONTENT_SIZE];               //邮件ID
   char  EmailTheme[SHORT_CONTENT_SIZE;             //邮件主题
   char EmailPath[LONG_CONTENT_SIZE];                //邮件在本地路径
-  int     EmailType ;                                //邮件类型 ： -2草稿，0发送，1抄送，2密送，3抄送+密送，
+  int     EmailType ;                                //邮件类型 ：0发送，1抄送，2密送，3抄送+密送，
   int     EmailState;                                //邮件状态 ：0保留，-1已读，1未读
   char  EmailSender[SHORT_CONTENT_SIZE];           //邮件发送者
   char  EmailReceiver[SHORT_CONTENT_SIZE];         //邮件接受者

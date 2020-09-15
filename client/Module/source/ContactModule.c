@@ -37,7 +37,7 @@ char*  GetContactInfo(char* UserID)
   if(UserID == NULL ){
 	printf("UserID is NULL!");
   }
-	sprintf(buffer,"GetContactInfo|%s",UserID);
+	sprintf(buffer,"getcontactinfo|%s",UserID);
 //	strcpy(text,"FriendID1|FriendID2|FriendID3");
 	printf ("send message to server: %s\n",buffer);
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
@@ -70,7 +70,7 @@ int AddContact(char* UserID , char* FriendID)
   if(UserID == NULL ){
 		return -1;
   }
-	sprintf(buffer,"insert|INSERT INTO ContactTable(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
+	sprintf(buffer,"contactinsert|INSERT INTO Contact Table(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
 	printf ("%s\n",buffer);
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
@@ -97,7 +97,7 @@ int DeleteContact (char* UserID,char* FriendID)
   if(UserID == NULL ){
 		return -1;
   }
-	sprintf(buffer,"delete|DELETE FROM UserTable WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
+	sprintf(buffer,"contactdelete|DELETE FROM Contact Table WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
 	printf ("send message to server:%s\n",buffer);
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){

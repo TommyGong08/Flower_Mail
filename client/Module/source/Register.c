@@ -99,7 +99,7 @@ int CheckRegisterInput(UserInfo* userInfo)
 		}
 	}
 	if (flag < 2){
-		return 2; //密码不合法
+		return -2; //密码不合法
 	}
 	return 0;//注册信息合法
 }
@@ -117,7 +117,7 @@ return value  :		0 发送成功
 					-1 调用socket失败
 
 */
-nt SendUserIdToServer(char* UserId)
+int SendUserIdToServer(char* UserId)
 {
  int client_socket=0;  
 	int i;
@@ -147,8 +147,10 @@ nt SendUserIdToServer(char* UserId)
  // length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+		close_socket(client_socket);
     return -1;
   }else printf("client receive message success!\n");
+	close_socket(client_socket);
   if(strcmp(buffer,"-1") == 0){//返回查询失败
     return -1;
   }

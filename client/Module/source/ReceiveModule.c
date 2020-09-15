@@ -29,7 +29,7 @@ int GetServerStringDisintergrate(char* string)
 
 }*/
 
-int ChangeEmailState(char* emailID ,int emailState)
+int ChangeEmailState(char* emailID)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
@@ -38,7 +38,7 @@ int ChangeEmailState(char* emailID ,int emailState)
 		return -1;//
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"update|UPDATE EmailTable SET state=%d WHERE EmailID=%s",emailState,emailID);
+	sprintf(buffer,"change|UPDATE Email Table SET state = '%d' WHERE EmailID= '%s'",1,emailID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
@@ -65,7 +65,7 @@ int DeleteServerEmail(char* emailID)
 		return -1;
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"Delete|%s",emailID);
+	sprintf(buffer,"deleteemail|%s",emailID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
@@ -84,7 +84,7 @@ int DeleteServerEmail(char* emailID)
 
 //点击“打开附件”自动下载附件到本地文件夹
 //text用于存放附件内容
-int GetAttachEmail(char* UserID,char* EmailID)
+int  GetAttachEmail(char* UserID,char* EmailID)
 {
   char text[BUFFER_SIZE]={0};
   char getMailID[50];
@@ -95,7 +95,7 @@ int GetAttachEmail(char* UserID,char* EmailID)
 		return -1;
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"AttachSerToCli|%s",EmailID);
+	sprintf(buffer,"attachsertocli|%s",EmailID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
@@ -122,7 +122,7 @@ int GetAttachEmail(char* UserID,char* EmailID)
 
 //向服务器发送请求，从服务器获取邮件,
 //****收件模块最重要的函数****// 
-int GetServerEmail(char* UserID)
+char* GetServerEmail(char* UserID)
 {
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
@@ -131,7 +131,7 @@ int GetServerEmail(char* UserID)
 		return -1;
   }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"EmailSerToCli|%s",UserID);
+	sprintf(buffer,"emailsertocli|%s",UserID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
@@ -145,13 +145,14 @@ int GetServerEmail(char* UserID)
     	printf("receive message from server: %s\n",buffer);
   }
   //写一个解析字符串的函数
-  int getIntergrate = GetServerStringDisintergrate(buffer);
-  if( getIntergrate < 0){
+//  int getIntergrate = GetServerStringDisintergrate(buffer);
+  /*if( getIntergrate < 0){
     print("string Disintergrate failed!\n");
     return -1;
   }else{
     printf("string disintergrate success!");
-  }
+  }*/
+  char* text = buffer;
   close_socket(client_socket);
-  return 0;
+  return text;
 }

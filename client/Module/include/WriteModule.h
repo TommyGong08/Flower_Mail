@@ -8,9 +8,9 @@
 //保存草稿到本地邮件
 int SaveDraft(UserInfo* userInfos , char* text);
 //从本地邮件中导入草稿
-int LeadinDraft(UserInfo* userInfo , char* text);
+char*  LeadinDraft(UserInfo* userInfo);
 //从本地得到附件
-int GetAttachFile(char* AttachFilePath , char* text);
+char*  LeadinAttachFile(char* AtthachFilePath);
 //保存附件内容,传入参数为文本text
 int SaveAttachFile(char* UserID,char* EmailID , char* text);
 //socket发送附件

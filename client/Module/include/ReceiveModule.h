@@ -9,12 +9,12 @@
 //分解收件buffer
 int GetServerStringDisintergrate(char* string);
 //改变邮件状态
-int ChangeEmailState(char * EmailID , int emailState);
+int ChangeEmailState(char * EmailID);
 //删除邮件
 int DeleteServerEmail(char * EmailID);
 //从服务端和数据库获取附件内容
 int GetAttachEmail(char* UserID,char* EmailID);
 //从服务端和数据库获取邮件
-int GetServerEmail(char* UserID);
+char*  GetServerEmail(char* UserID);
 
 #endif

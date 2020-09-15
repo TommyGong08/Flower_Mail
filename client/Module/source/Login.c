@@ -116,7 +116,7 @@ author        :		姜渝
 
 function name :		SendUserInfoToServer
 
-description   :		将用户登录信息发送到服务端
+description   :		将用户登录信息发送到服务端,查询用户名与密码是否匹配
 				    
 
 Parameter     :		char *UserName,char* PsWd
@@ -162,6 +162,43 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	return -1;
 }
 
+int SendLoginStateToServer(char* UserName)
+{
+		int sendResult1;//用户名密码匹配结果
+	char buffer1[LONG_CONTENT_SIZE];
+	char receBuffer[LONG_CONTENT_SIZE];
+	memset(buffer1, '\0', LONG_CONTENT_SIZE);
+	memset(receBuffer, '\0', LONG_CONTENT_SIZE);
+	//数据库操作
+	char event[10] = "select";//选择
+	int isocketfd = 0;
+	//查询用户名与密码是否匹配
+	sprintf(buffer1, "loginstateselect|SELECT state FROM UserTable WHERE UserID='%s' ",UserName);
+  printf("%s\n",buffer1);
+  isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
+	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
+	//发送失败
+	if (sendResult1<0){
+		return -1;
+	}
+  bzero(buffer1, BUFFER_SIZE);
+	int length = 0;
+  length = recv(isocketfd, buffer1, LONG_CONTENT_SIZE, 0);
+	if(length < 0){
+		printf("receive message failed!\n");
+		close_socket(isocketfd);
+		return -1;
+	}
+  printf("%s\n",buffer1);
+ if(strcmp(buffer1,"0") != 0){
+	 	return -1;//已登陆
+ }
+	close_socket(isocketfd);
+	printf("%d\n",close);
+	return -1;
+}
+
+
 //尚未测试
 //将退出信息发送给服务器
 int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
@@ -175,7 +212,7 @@ int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 	char event[10] = "select";//选择
 	int isocketfd = 0;
 	//将state设置成1，表示用户为为登陆状态
-	sprintf(buffer1, "update|update UserTable SET state = '1' WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);//
+	sprintf(buffer1, "logoutupdate|update UserTable SET state = '1' WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);//
   printf("%s\n",buffer1);
   isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
