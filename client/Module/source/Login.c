@@ -136,7 +136,7 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	char event[10] = "select";//选择
 	int isocketfd = 0;
 	//查询用户名与密码是否匹配
-	sprintf(buffer1, "select|SELECT state FROM UserTable WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);
+	sprintf(buffer1, "loginselect|SELECT Passwd FROM UserTable WHERE UserID='%s' ",UserName);
   printf("%s\n",buffer1);
   isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
@@ -144,21 +144,25 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	if (sendResult1<0){
 		return -1;
 	}
-	recv_msg(isocketfd, receBuffer, LONG_CONTENT_SIZE);
-	int state = -1;
-	//假设receBuffer格式如：1#
-	printf("receive message: %s\n", receBuffer);
-	if(receBuffer[0]=='0'){
-		printf("Login Success!\n");
-		return -1;
-	}else if(receBuffer[0]=='-'){
-		printf("already Login!\n");
-    return -1;
+  bzero(buffer1, BUFFER_SIZE);
+	int length = 0;
+  length = recv(isocketfd, buffer1, LONG_CONTENT_SIZE, 0);
+	if(length < 0){
+		printf("receive message failed!\n");
 	}
-	close_socket(isocketfd);
-	return 0;
+  printf("%s\n",buffer1);
+	printf("%s\n",PsWd);
+	int close = 0;
+	if(strcmp(buffer1,PsWd) == 0){
+		printf("Login success!\n");
+		return close;
+	}
+	close = close_socket(isocketfd);
+	printf("%d\n",close);
+	return -1;
 }
 
+//尚未测试
 //将退出信息发送给服务器
 int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 {
@@ -193,6 +197,7 @@ int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 	close_socket(isocketfd);
 	return 0;
 }
+
 //创建文件夹函数
 int MakeDirectory(const char* FileName)
 {

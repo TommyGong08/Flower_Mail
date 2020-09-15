@@ -117,7 +117,7 @@ return value  :		0 发送成功
 					-1 调用socket失败
 
 */
-int SendUserIdToServer(char* UserId)
+nt SendUserIdToServer(char* UserId)
 {
  int client_socket=0;  
 	int i;
@@ -125,20 +125,31 @@ int SendUserIdToServer(char* UserId)
 	char buffer[LONG_CONTENT_SIZE];
 	memset(buffer, '\0', LONG_CONTENT_SIZE);
   int iresocketfd = 0;
-	sprintf(buffer, "select|SELECT UserID FROM UserTable WHERE UserID='%s'", UserId);
+	sprintf(buffer, "registerselect|SELECT UserID FROM UserTable WHERE UserID = '%s'", UserId);
+  //registerselect|SELECT UserID FROM UserTable WHERE UserID = 'aw'
+
+  printf("%s\n",buffer);
 	iresocketfd = connect_socket(SERVER_IP, SERVER_PORT);
+  if(iresocketfd < 0){
+    printf("client connect failed!\n");
+    return -1;
+  }else printf("client connect success!\n");
 	client_socket = send_msg(iresocketfd, buffer, LONG_CONTENT_SIZE);
 	if (client_socket < 0){
+    printf("client send message failed!\n");
 		return -1;//调用socket失败
-	}
+	}else{
+    printf("client send message success!\n");
+  }
   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket, buffer, LONG_CONTENT_SIZE, 0);
+  printf("%s\n",buffer);
+ // length = recv_msg(client_socket,buffer,BUFFER_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
-  }
-  int num = buffer -'0';
-  if(num < 0){//返回查询失败
+  }else printf("client receive message success!\n");
+  if(strcmp(buffer,"-1") == 0){//返回查询失败
     return -1;
   }
   close_socket(client_socket);
@@ -153,24 +164,29 @@ int SendRegisterUserInfoToServer(UserInfo* userInfo)
   int iresocketfd = 0;
   int length = 0;
 	memset(buffer, '\0', LONG_CONTENT_SIZE);
-	sprintf(buffer, "insert|INSERT INTO UserTable(UserID, Passwd, state, Telephone) VALUES ('%s','%s',%d, '%s')", userInfo->UserName, userInfo->Password, userInfo->LoginState, userInfo->Telephone);
+	sprintf(buffer, "registerinsert|%s|%s|%d|%s|", userInfo->UserName, userInfo->Password, userInfo->LoginState, userInfo->Telephone);
+ // registerinsert|TommyGong08|432784hjgf|0|13667584563|
+  printf("%s\n",buffer);
 	iresocketfd = connect_socket(SERVER_IP, SERVER_PORT);
+  if(iresocketfd < 0){
+    printf("connect failed!\n");
+  }else printf("connected success!\n");
 	sendResult = send_msg(iresocketfd, buffer, LONG_CONTENT_SIZE);
 	if (sendResult <0)	{
 		return -1;//调用socket失败
 	}
-   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(iresocketfd,buffer,BUFFER_SIZE);//返回0表示查询成功，数据库中存在相应字段
+  bzero(buffer, BUFFER_SIZE);
+  length = recv(iresocketfd, buffer, LONG_CONTENT_SIZE, 0);
+  printf("%s\n",buffer);
+  //sendResult = send_msg(iresocketfd, buffer, LONG_CONTENT_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
   }
-  int num = buffer -'0';
-  if(num < 0){//返回查询失败
+  if(strcmp(buffer,"-1") == 0){//返回查询失败
     return -1;
   }
-  close_socket(iresocketfd);
-  return 0;
 
+  close_socket(iresocketfd);
 		return 0;
 }

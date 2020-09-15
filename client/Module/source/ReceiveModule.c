@@ -124,7 +124,6 @@ int GetAttachEmail(char* UserID,char* EmailID)
 //****收件模块最重要的函数****// 
 int GetServerEmail(char* UserID)
 {
-//需要获取附件
   char buffer[BUFFER_SIZE]={0};
 	int length=0;
   int client_socket=0;
@@ -155,5 +154,4 @@ int GetServerEmail(char* UserID)
   }
   close_socket(client_socket);
   return 0;
-
 }

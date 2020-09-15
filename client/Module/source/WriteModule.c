@@ -164,13 +164,13 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
                                  EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
                                  EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,EmailInfo->EmailReceiver,text);
    }else if(EmailInfo->IfAttachFile == -1){
-      sprintf(buffer,"EmailCliToSer|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+      sprintf(buffer,"EmailCliToSer|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|",
                                  EmailInfo->EmailID,EmailInfo->EmailTheme,EmailInfo->EmailPath,EmailInfo->EmailType,
                                  EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
                                  EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,EmailInfo->EmailReceiver,text);
    }
 	client_socket= connect_socket(SERVER_IP,SERVER_PORT);   
-      
+
 	printf ("string sended to server:%s\n",buffer);
 	length=send_msg(client_socket,buffer,FILE_BUFFER_SIZE);
    if(length<0){
