@@ -127,7 +127,6 @@ int SendUserIdToServer(char* UserId)
   int iresocketfd = 0;
 	sprintf(buffer, "registerselect|SELECT UserID FROM UserTable WHERE UserID = '%s'", UserId);
   //registerselect|SELECT UserID FROM UserTable WHERE UserID = 'aw'
-
   printf("%s\n",buffer);
 	iresocketfd = connect_socket(SERVER_IP, SERVER_PORT);
   if(iresocketfd < 0){
@@ -175,6 +174,7 @@ int SendRegisterUserInfoToServer(UserInfo* userInfo)
   }else printf("connected success!\n");
 	sendResult = send_msg(iresocketfd, buffer, LONG_CONTENT_SIZE);
 	if (sendResult <0)	{
+		close_socket(iresocketfd);
 		return -1;//调用socket失败
 	}
   bzero(buffer, BUFFER_SIZE);
@@ -183,12 +183,13 @@ int SendRegisterUserInfoToServer(UserInfo* userInfo)
   //sendResult = send_msg(iresocketfd, buffer, LONG_CONTENT_SIZE);
   if(length<0){
     printf("can't receive message from server!\n");
+		close_socket(iresocketfd);
     return -1;
   }
   if(strcmp(buffer,"-1") == 0){//返回查询失败
+	close_socket(iresocketfd);
     return -1;
   }
-
-  close_socket(iresocketfd);
+    close_socket(iresocketfd);
 		return 0;
 }

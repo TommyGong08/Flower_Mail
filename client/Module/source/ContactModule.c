@@ -19,14 +19,6 @@ author：龚海龙
 #include <arpa/inet.h>
 #include <errno.h>
 
-/*解析通讯录字符串
-字符串以“|”分隔开
-int StringDisintergrate(char* string )
-{
-  
-}
-*/
-
 //获得通讯录信息
 char*  GetContactInfo(char* UserID)
 {
@@ -44,7 +36,7 @@ char*  GetContactInfo(char* UserID)
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
   }
   bzero (buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length =  recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
   }else{
@@ -77,7 +69,7 @@ int AddContact(char* UserID , char* FriendID)
 		return -2;
   }
   bzero (buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket,buffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
@@ -104,7 +96,7 @@ int DeleteContact (char* UserID,char* FriendID)
 		return -1;
   }
   bzero (buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket,buffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;

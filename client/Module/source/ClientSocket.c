@@ -64,6 +64,7 @@ int send_msg(int sockfd,char* sendBuff,int length)
     }
 }
 
+/*
 int  recv_msg(int sockfd,char* buffer,int bufflength)
 {
     int flag=0;
@@ -85,6 +86,7 @@ int  recv_msg(int sockfd,char* buffer,int bufflength)
     buffer[flag]='\0';
     return 0;
 }
+*/
 
 int close_socket(int sockfd)
 {

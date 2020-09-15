@@ -113,7 +113,7 @@ int SaveAttachFile(char* UserID,char* EmailID , char* text)
       return -1;
    }
    //写成文件
-   int write_ = fwrite (text, sizeof (char),FILE_BUFFER_SIZE, fp);
+   int write_ = fwrite(text, sizeof (char),FILE_BUFFER_SIZE, fp);
 	if (write_ < 0)
 	{
 		printf ("File:\t%s Write Failed\n", path);
@@ -126,27 +126,23 @@ int SaveAttachFile(char* UserID,char* EmailID , char* text)
 int SendAttachFile(char* emailID, char* attachFilePath)
 {
    char buffer[BUFFER_SIZE]={0};
+   char* text[BUFFER_SIZE] ;
    char text[BUFFER_SIZE] = {0};
 	int length=0;
   int client_socket=0;
   if(attachFilePath == NULL ){
 		return -1;
   }
-  int GetAttach = LeadinAttachFile(attachFilePath ,&text);//&text这里可能有bug
-  if(GetAttach == 0){
-     printf("get attached  file Success!");
-  }else{
-     printf("get attached file Failed!");
-     return -1;
-  }
-	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
+  //导入附件信息
+   char* text = LeadinAttachFile(attachFilePath);//&text这里可能有bug
 	sprintf(buffer,"attachclitoser|AttachCliToSer|%s|%s#" , emailID , text);
 	printf ("send message to server:%s\n",buffer);
+   client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -2;
   }
   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket,buffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
@@ -169,17 +165,15 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
                                  EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
                                  EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,
                                  EmailInfo->EmailReceiver,text);
+   printf ("string sended to server:%s\n",buffer);
 	client_socket= connect_socket(SERVER_IP,SERVER_PORT);  
-	printf ("string sended to server:%s\n",buffer);
 	length=send_msg(client_socket,buffer,FILE_BUFFER_SIZE);
    if(length<0){
       printf("send Email Failed!\n");
 		return -1;
    }
 	bzero (buffer, FILE_BUFFER_SIZE);
-   printf("SERVERIP=%s   SERVERPORT=%d",SERVER_IP,SERVER_PORT);
-//	length = recv_msg(client_socket,buffer,FILE_BUFFER_SIZE);//从服务器端接受到emailId
-   length = recv_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+   length = recv(client_socket, buffer, BUFFER_SIZE,0);
    if(length < 0){
       printf("can't receive message from server!\n");
       return -1;
@@ -187,7 +181,7 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
    close_socket(client_socket);
    int send_attachfile = 0;
    //判断邮件类型，如果有附件
-   if(EmailInfo->IfAttachFile==0){
+   if(EmailInfo->IfAttachFile == 0){
        send_attachfile = SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
        if(send_attachfile < 0){
           printf("send attached file Failed!\n");

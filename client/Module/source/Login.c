@@ -198,7 +198,6 @@ int SendLoginStateToServer(char* UserName)
 	return -1;
 }
 
-
 //尚未测试
 //将退出信息发送给服务器
 int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
@@ -220,13 +219,13 @@ int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 	if (sendResult1<0){
 		return -1;
 	}
-	recv_msg(isocketfd, receBuffer, LONG_CONTENT_SIZE);
+	int length =0;
+	length = recv(isocketfd, receBuffer, BUFFER_SIZE,0);
 	int state = -1;
 	//假设receBuffer格式如：1#
 	printf("receive message: %s\n", receBuffer);
 	if(receBuffer[0]=='0'){
 		printf("Logout Success!\n");
-		return -1;
 	}else if(receBuffer[0]=='-'){
 		printf("LogOut Failed!\n");
     return -1;

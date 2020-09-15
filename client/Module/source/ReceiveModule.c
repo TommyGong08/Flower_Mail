@@ -44,15 +44,16 @@ int ChangeEmailState(char* emailID)
 		return -1;
   }
   bzero (buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket, buffer, LONG_CONTENT_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
+      close_socket(client_socket);
     return -1;
   }else{
     	printf("receive message from server: %s \n",buffer);
   }
   close_socket(client_socket);
-  return 0;  
+  return 0; 
 }
 
 //删除数据库及服务器本地的邮件信息
@@ -71,7 +72,7 @@ int DeleteServerEmail(char* emailID)
 		return -1;
   }
   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
@@ -94,14 +95,14 @@ int  GetAttachEmail(char* UserID,char* EmailID)
   if(EmailID == NULL){
 		return -1;
   }
-	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"attachsertocli|%s",EmailID);
 	printf ("send message to server:%s\n",buffer);
+  client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
 		return -1;
   }
   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
@@ -109,7 +110,7 @@ int  GetAttachEmail(char* UserID,char* EmailID)
     //buffer内容为：EmailID|附件内容
     	printf("receive message from server: %s\n",buffer);
 	    char *  temp_text=strchr(buffer,'|');
-      strncpy (getMailID, buffer,strlen(buffer)-strlen(text)); 
+      strncpy(getMailID, buffer,strlen(buffer)-strlen(text)); 
 	    temp_text++;
       //附件内容存入到text中
       strcpy(text,temp_text);
@@ -137,7 +138,7 @@ char* GetServerEmail(char* UserID)
 		return -1;
   }
   bzero(buffer, BUFFER_SIZE);
-  length = recv_msg(client_socket,buffer,BUFFER_SIZE);
+  length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
