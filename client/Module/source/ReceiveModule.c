@@ -29,22 +29,25 @@ int GetServerStringDisintergrate(char* string)
 
 }*/
 
+//success
 int ChangeEmailState(char* emailID)
 {
-  char buffer[BUFFER_SIZE]={0};
-	int length=0;
-  int client_socket=0;
-  if(emailID == NULL){
-		return -1;//
-  }
+    int sendResult1;
+ // char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+ // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
+ int client_socket =0 ;
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	sprintf(buffer,"change|UPDATE Email Table SET state = '%d' WHERE EmailID= '%s'",1,emailID);
+	sprintf(buffer,"changeemailstate|UPDATE EmailTable SET state = '%d' WHERE EmailID= '%s'",1,emailID);
 	printf ("send message to server:%s\n",buffer);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
+	sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
 		return -1;
-  }
+	}
+  int length = 0;
   bzero (buffer, BUFFER_SIZE);
-  length = recv(client_socket, buffer, LONG_CONTENT_SIZE, 0);
+  length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
       close_socket(client_socket);
@@ -57,20 +60,23 @@ int ChangeEmailState(char* emailID)
 }
 
 //删除数据库及服务器本地的邮件信息
+//success
 int DeleteServerEmail(char* emailID)
 {
-  char buffer[BUFFER_SIZE]={0};
+int sendResult1;
+ // char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+ // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-  if(emailID == NULL){
-		return -1;
-  }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"deleteemail|%s",emailID);
 	printf ("send message to server:%s\n",buffer);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
+	sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
 		return -1;
-  }
+	}
   bzero(buffer, BUFFER_SIZE);
   length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
@@ -85,6 +91,7 @@ int DeleteServerEmail(char* emailID)
 
 //点击“打开附件”自动下载附件到本地文件夹
 //text用于存放附件内容
+//success
 int  GetAttachEmail(char* UserID,char* EmailID)
 {
   char text[BUFFER_SIZE]={0};
@@ -125,23 +132,24 @@ int  GetAttachEmail(char* UserID,char* EmailID)
 //****收件模块最重要的函数****// 
 char* GetServerEmail(char* UserID)
 {
-  char buffer[BUFFER_SIZE]={0};
+ int sendResult1;
+ // char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+ // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-  if(UserID == NULL){
-		return -1;
-  }
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"emailsertocli|%s",UserID);
 	printf ("send message to server:%s\n",buffer);
 	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
-		return -1;
+		return NULL;
   }
   bzero(buffer, BUFFER_SIZE);
   length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
     printf("can't receive message from server!\n");
-    return -1;
+    return NULL;
   }else{
     	printf("receive message from server: %s\n",buffer);
   }

@@ -155,23 +155,28 @@ int SendAttachFile(char* emailID, char* attachFilePath)
 
 int SendEmail(MailInfo*  EmailInfo, char* text)
 {
+ {
    //要发送常规邮件、附件、抄送、密送
-   char buffer[FILE_BUFFER_SIZE]={0};
+   	char* msg=NULL;
+      int sendResult1;
+ // char receBuffer[LONG_CONTENT_SIZE];
+    char buffer[LONG_CONTENT_SIZE]={0};
+      memset(buffer, '\0', LONG_CONTENT_SIZE);
+ // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
-	char* msg=NULL;
-	int client_socket=0;
+  int client_socket=0;
    sprintf(buffer,"emailclitoser|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|",
                                  EmailInfo->EmailID,EmailInfo->EmailTheme,EmailInfo->EmailPath,EmailInfo->EmailType,
                                  EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
                                  EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,
                                  EmailInfo->EmailReceiver,text);
+  // sprintf(buffer,"emailclitoser|473829|debug123|../data/TommyGONG08|0|2|NULL|NULL|2020-9-14|1|473829|../data/TOmmyGONG08/attach|TommyGONG08|Mary|HELLO Mary! My name is Tom. Nice to meet you!|");
    printf ("string sended to server:%s\n",buffer);
 	client_socket= connect_socket(SERVER_IP,SERVER_PORT);  
-	length=send_msg(client_socket,buffer,FILE_BUFFER_SIZE);
-   if(length<0){
-      printf("send Email Failed!\n");
+  sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
 		return -1;
-   }
+	}
 	bzero (buffer, FILE_BUFFER_SIZE);
    length = recv(client_socket, buffer, BUFFER_SIZE,0);
    if(length < 0){
@@ -181,6 +186,7 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
    close_socket(client_socket);
    int send_attachfile = 0;
    //判断邮件类型，如果有附件
+   
    if(EmailInfo->IfAttachFile == 0){
        send_attachfile = SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
        if(send_attachfile < 0){

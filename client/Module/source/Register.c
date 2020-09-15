@@ -22,26 +22,7 @@ author：姜瑜
 #include <errno.h>
 
 
-/*
-author        :		姜渝
-
-function name :		CheckRegisterInput
-
-description   :		本地检查注册信息，判断用户输入的帐号及密码是否合法,并弹出错误提示
-
-Parameter     :		UserInfo* userInfo
-
-return value  :		0 成功
-					1 帐户ID非法
-						Checkresult（string）输出错误提示
-						1） 用户名长度不对
-						2） 用户名首位为数字
-						3） 用户名包含非法字符
-					2 密码非法
-						1） 密码长度不对
-						2） 密码包含非法字符
-						3） 密码不包含两种字符
-*/
+//success
 int CheckRegisterInput(UserInfo* userInfo)
 {
 	int i;
@@ -104,19 +85,7 @@ int CheckRegisterInput(UserInfo* userInfo)
 	return 0;//注册信息合法
 }
 
-/*
-author        :		姜渝
-
-function name :		SendUserInfoToServer
-
-description   :		将用户名拼接成符合SQL语句的字符串，调用socket函数发送字符串到服务器
-
-Parameter     :		char* UserId
-
-return value  :		0 发送成功
-					-1 调用socket失败
-
-*/
+//success
 int SendUserIdToServer(char* UserId)
 {
  int client_socket=0;  
@@ -157,6 +126,7 @@ int SendUserIdToServer(char* UserId)
 	return 0;//发送成功，跳转到登陆页面
 }
 
+//success
 //把注册用户的所有信息发送给服务器
 int SendRegisterUserInfoToServer(UserInfo* userInfo)
 {

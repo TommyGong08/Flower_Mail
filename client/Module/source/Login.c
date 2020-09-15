@@ -111,20 +111,7 @@ int CheckLoginInput(char* UserName, char* PsWd)
 	return 0;
 }
 
-/*
-author        :		姜渝
-
-function name :		SendUserInfoToServer
-
-description   :		将用户登录信息发送到服务端,查询用户名与密码是否匹配
-				    
-
-Parameter     :		char *UserName,char* PsWd
-
-return value  :		0 发送成功
-				    -1 调用socket失败
-
-*/
+//success
 int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 {
 	int sendResult1;//用户名密码匹配结果
@@ -162,6 +149,7 @@ int SendLoginUserInfoToServer(char* UserName , char* PsWd)
 	return -1;
 }
 
+//success
 int SendLoginStateToServer(char* UserName)
 {
 		int sendResult1;//用户名密码匹配结果
@@ -173,7 +161,7 @@ int SendLoginStateToServer(char* UserName)
 	char event[10] = "select";//选择
 	int isocketfd = 0;
 	//查询用户名与密码是否匹配
-	sprintf(buffer1, "loginstateselect|SELECT state FROM UserTable WHERE UserID='%s' ",UserName);
+	sprintf(buffer1, "loginstateselect|SELECT UserID, state FROM UserTable WHERE UserID='%s' ",UserName);
   printf("%s\n",buffer1);
   isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
@@ -191,18 +179,19 @@ int SendLoginStateToServer(char* UserName)
 	}
   printf("%s\n",buffer1);
  if(strcmp(buffer1,"0") != 0){
+	 	close_socket(isocketfd);
 	 	return -1;//已登陆
  }
 	close_socket(isocketfd);
-	printf("%d\n",close);
+//	printf("%d\n",close);
 	return -1;
 }
 
-//尚未测试
+//success
 //将退出信息发送给服务器
 int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 {
-		int sendResult1;//用户名密码匹配结果
+	int sendResult1;//用户名密码匹配结果
 	char buffer1[LONG_CONTENT_SIZE];
 	char receBuffer[LONG_CONTENT_SIZE];
 	memset(buffer1, '\0', LONG_CONTENT_SIZE);
@@ -211,7 +200,7 @@ int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 	char event[10] = "select";//选择
 	int isocketfd = 0;
 	//将state设置成1，表示用户为为登陆状态
-	sprintf(buffer1, "logoutupdate|update UserTable SET state = '1' WHERE UserID='%s' and Passwd='%s'",UserName, PsWd);//
+	sprintf(buffer1, "logoutupdate|UPDATE UserTable SET state = '1' WHERE UserID='%s'",UserName);
   printf("%s\n",buffer1);
   isocketfd = connect_socket(SERVER_IP, SERVER_PORT);
 	sendResult1 = send_msg(isocketfd, buffer1, LONG_CONTENT_SIZE);
@@ -234,7 +223,7 @@ int  SendLoginOutInfoToServer(char* UserName , char* PsWd)
 	return 0;
 }
 
-//创建文件夹函数
+//创建文件夹函数,success
 int MakeDirectory(const char* FileName)
 {
 	char DirName[256];
@@ -256,6 +245,7 @@ int MakeDirectory(const char* FileName)
 	return 0;
 }
 
+//success
 //用户登陆成功后创建两个文件夹，分别用于存放草稿和下载的附件
 int CreateUserFolder(char *userID)
 {

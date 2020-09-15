@@ -19,7 +19,8 @@ author：龚海龙
 #include <arpa/inet.h>
 #include <errno.h>
 
-//获得通讯录信息
+//主建冲突
+//success
 char*  GetContactInfo(char* UserID)
 {
   char buffer[BUFFER_SIZE]={0};
@@ -53,23 +54,25 @@ char*  GetContactInfo(char* UserID)
   return text_pointer;
 }
 
-//添加通讯录好友
+//success
 int AddContact(char* UserID , char* FriendID)
 {
-  char buffer[BUFFER_SIZE]={0};
+  int sendResult1;
+  char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+  memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-  if(UserID == NULL ){
-		return -1;
-  }
-	sprintf(buffer,"contactinsert|INSERT INTO Contact Table(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
+	sprintf(buffer,"contactinsert|INSERT INTO ContactTable(UserID,FriendID )VALUES('%s','%s')",UserID,FriendID);
 	printf ("%s\n",buffer);
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
-		return -2;
-  }
+  sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
+		return -1;
+	}
   bzero (buffer, BUFFER_SIZE);
-  length = recv(client_socket,buffer,BUFFER_SIZE,0);
+  length = recv(client_socket,receBuffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
@@ -80,23 +83,25 @@ int AddContact(char* UserID , char* FriendID)
   return 0;  
 }
 
-//删除通讯录好友
+//success
 int DeleteContact (char* UserID,char* FriendID)
 {
-  char buffer[BUFFER_SIZE]={0};
+  int sendResult1;
+  char receBuffer[LONG_CONTENT_SIZE];
+  char buffer[LONG_CONTENT_SIZE]={0};
+  memset(buffer, '\0', LONG_CONTENT_SIZE);
+  memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-  if(UserID == NULL ){
-		return -1;
-  }
-	sprintf(buffer,"contactdelete|DELETE FROM Contact Table WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
+	sprintf(buffer,"contactdelete|DELETE FROM ContactTable WHERE UserId = '%s' and FriendID = '%s'",UserID,FriendID);
 	printf ("send message to server:%s\n",buffer);
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
+	sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
 		return -1;
-  }
+	}
   bzero (buffer, BUFFER_SIZE);
-  length = recv(client_socket,buffer,BUFFER_SIZE,0);
+  length = recv(client_socket,receBuffer,BUFFER_SIZE,0);
   if(length<0){
     printf("can't receive message from server!\n");
     return -1;
