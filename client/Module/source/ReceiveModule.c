@@ -129,7 +129,7 @@ int  GetAttachEmail(char* UserID,char* EmailID)
 }
 
 //向服务器发送请求，从服务器获取邮件,
-//****收件模块最重要的函数****// 
+//success
 char* GetServerEmail(char* UserID)
 {
  int sendResult1;
@@ -142,9 +142,10 @@ char* GetServerEmail(char* UserID)
 	client_socket = connect_socket(SERVER_IP,SERVER_PORT);
 	sprintf(buffer,"emailsertocli|%s",UserID);
 	printf ("send message to server:%s\n",buffer);
-	if(send_msg(client_socket,buffer,BUFFER_SIZE)<0){
+	sendResult1 = send_msg(client_socket, buffer, LONG_CONTENT_SIZE);
+	if (sendResult1<0){
 		return NULL;
-  }
+	}
   bzero(buffer, BUFFER_SIZE);
   length = recv(client_socket, buffer, BUFFER_SIZE, 0);
   if(length<0){
