@@ -44,6 +44,7 @@ return value  :		0 成功
 
 */
 //判断输入的字符串
+//success
 int CheckLoginInput(char* UserName, char* PsWd)
 {
 // 用户名长度6-20位，由数字，字母，下划线组成，且不能以数字开头，字母不区分大小写。

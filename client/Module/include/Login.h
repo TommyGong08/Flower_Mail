@@ -1,6 +1,7 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 #include"ClientSocket.h"
+#include"Struct.h"
 
 
 //判断输入的字符串
@@ -10,7 +11,7 @@ int CheckLoginInput(char* UserName, char* PsWd);
 int SendLoginUserInfoToServer(char* UserName , char* PsWd);
 
 //把登陆发送给服务器
-int SendLoginStateToServer(char* UserName)；
+int SendLoginStateToServer(char* UserName);
 
 //将退出消息发送给服务器
 int SendLoginOutInfoToServer(char* UserName , char* PsWd);
