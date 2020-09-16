@@ -3,8 +3,8 @@
 author：姜瑜
 
 */
-#include"Struct.h"
-#include"Register.h"
+#include"../include/Struct.h"
+#include"../include/Register.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -128,7 +128,7 @@ int SendUserIdToServer(char* UserId)
 
 //success
 //把注册用户的所有信息发送给服务器
-int SendRegisterUserInfoToServer(char* UserName,char* PassWord, char* LoginState,char* Telephone)
+int SendRegisterUserInfoToServer(char* UserName,char* PassWord, int LoginState,char* Telephone)
 {
   int sendResult;
 	char buffer[LONG_CONTENT_SIZE];

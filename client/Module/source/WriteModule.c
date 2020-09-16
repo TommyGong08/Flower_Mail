@@ -3,8 +3,8 @@
 author：龚海龙
 
 */
-#include"Struct.h"
-#include"WriteModule.h"
+#include"../include/Struct.h"
+#include"../include/WriteModule.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -64,7 +64,7 @@ char*  LeadinDraft(char* UserName)
 }
 
 //从本地文件夹删除草稿
-int DeleteDraft(UserName)
+int DeleteDraft(char* UserName)
 {
    char path[50];
    sprintf(path, "../data/%s/draft/1.txt",UserName);
@@ -119,7 +119,7 @@ int SaveAttachFile(char* UserID,char* EmailID , char* text)
 	{
 		printf ("File:\t%s Write Failed\n", path);
 	}
-   close(fp);
+   fclose(fp);
    return 0;
 }
 

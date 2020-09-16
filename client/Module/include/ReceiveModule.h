@@ -1,7 +1,7 @@
 #ifndef RECEIVEMODULE_H
 #define RECEIRVEMODULE_H
 #include "Struct.h"
-#include"ClientSocket.h"
+#include "ClientSocket.h"
 #define GET_MAIL_LIST 100
 
 //收件箱模块

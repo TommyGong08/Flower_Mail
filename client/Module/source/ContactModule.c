@@ -1,8 +1,8 @@
 /*
 author：龚海龙
 */
-#include"ContactModule.h"
-#include"Struct.h"
+#include"../include/ContactModule.h"
+#include"../include/Struct.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

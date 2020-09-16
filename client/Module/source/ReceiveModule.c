@@ -3,9 +3,10 @@
 author：龚海龙
 
 */
-#include"Struct.h"
-#include"ReceiveModule.h"
-#include"WriteModule.h"
+#include"../include/Login.h"
+#include"../include/Struct.h"
+#include"../include/ClientSocket.h"
+#include"../include/WriteModule.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

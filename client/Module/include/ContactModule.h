@@ -6,6 +6,6 @@
 
 char*  GetContactInfo(char* UserID);
 int AddContact (char* UserID , char* ContactID);
-int DeleteContact (char* UserID,char* FriendID)
+int DeleteContact (char* UserID,char* FriendID);
 
 #endif

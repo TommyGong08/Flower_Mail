@@ -13,6 +13,6 @@ int SendUserIdToServer(char* UserId);
 int RecUserIdResFromServer();
 
 //把注册用户的所有信息发送给服务器
-int SendRegisterUserInfoToServer(char* UserName,char* PassWord, char* LoginState,char* Telephone);
+int SendRegisterUserInfoToServer(char* UserName,char* PassWord, int LoginState,char* Telephone);
 
 #endif

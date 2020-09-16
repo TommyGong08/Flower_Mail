@@ -1,5 +1,5 @@
-#include"Struct.h"
-#include"ClientSocket.h"
+#include"../include/Struct.h"
+#include"../include/ClientSocket.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

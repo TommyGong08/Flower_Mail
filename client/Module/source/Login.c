@@ -3,8 +3,8 @@
 author: 姜瑜
 
 */
-#include"Login.h"
-#include"Struct.h"
+#include"../include/Login.h"
+#include"../include/Struct.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
