@@ -23,20 +23,20 @@ author：姜瑜
 
 
 //success
-int CheckRegisterInput(UserInfo* userInfo)
+int CheckRegisterInput(char* UserName, char* Password,char* Telephone)
 {
 	int i;
-	int iUserIDLength = strlen(userInfo->UserName);
-	int iPasswdLength = strlen(userInfo->Password);
-	int iTeleLength = strlen(userInfo->Telephone);
+	int iUserIDLength = strlen(UserName);
+	int iPasswdLength = strlen(Password);
+	int iTeleLength = strlen(Telephone);
 	if (iUserIDLength < 6 || iUserIDLength > 20){
 		return 1;//帐户ID非法
 	}
-	if (userInfo->UserName[0] >= '0' && userInfo->UserName[0] <= '9'){
+	if (UserName[0] >= '0' && UserName[0] <= '9'){
 		return 1;
 	}
 	for (i=0; i < iUserIDLength; i++){
-		if ((userInfo->UserName[i] >= '0' && userInfo->UserName[i] <= '9') || (userInfo->UserName[i] >= 'a' && userInfo->UserName[i] <= 'z') || (userInfo->UserName[i] >= 'A' && userInfo->UserName[i] <= 'Z') || userInfo->UserName[i] == '_')
+		if ((UserName[i] >= '0' && UserName[i] <= '9') || (UserName[i] >= 'a' && UserName[i] <= 'z') || (UserName[i] >= 'A' &&UserName[i] <= 'Z') || UserName[i] == '_')
 		{
 			continue;
 		}else{
@@ -56,22 +56,22 @@ int CheckRegisterInput(UserInfo* userInfo)
 	int flag__ = 0;
 	for (i = 0; i < iPasswdLength; i++)
 	{
-		if (userInfo->Password[i] >= '0' && userInfo->Password[i] <= '9')//数字
+		if (Password[i] >= '0' &&Password[i] <= '9')//数字
     {
 			if (!flag_num){ flag += 1; }
 			flag_num++;
 			continue;
-	}else if (userInfo->Password[i] >= 'a' && userInfo->Password[i] <= 'z')//小写字母
+	}else if (Password[i] >= 'a' && Password[i] <= 'z')//小写字母
 	{
 			if (!flag_a) { flag += 1; }
 			flag_a++;
 			continue;
-		}else if (userInfo->Password[i] >= 'A' && userInfo->Password[i] <= 'Z')//大写字母
+		}else if (Password[i] >= 'A' && Password[i] <= 'Z')//大写字母
 		{
 			if (!flag_a) { flag += 1; }
 			flag_a++; //大小写字母都记作字母 flag_a计数
 			continue;
-		}else if (userInfo->Password[i] == '_'){
+		}else if (Password[i] == '_'){
 			if (!flag__) { flag += 1; }
 			flag__++;
 			continue;
@@ -128,14 +128,14 @@ int SendUserIdToServer(char* UserId)
 
 //success
 //把注册用户的所有信息发送给服务器
-int SendRegisterUserInfoToServer(UserInfo* userInfo)
+int SendRegisterUserInfoToServer(char* UserName,char* PassWord, char* LoginState,char* Telephone)
 {
   int sendResult;
 	char buffer[LONG_CONTENT_SIZE];
   int iresocketfd = 0;
   int length = 0;
 	memset(buffer, '\0', LONG_CONTENT_SIZE);
-	sprintf(buffer, "registerinsert|%s|%s|%d|%s|", userInfo->UserName, userInfo->Password, userInfo->LoginState, userInfo->Telephone);
+	sprintf(buffer, "registerinsert|%s|%s|%d|%s|",UserName,PassWord, LoginState, Telephone);
  // registerinsert|TommyGong08|432784hjgf|0|13667584563|
   printf("%s\n",buffer);
 	iresocketfd = connect_socket(SERVER_IP, SERVER_PORT);

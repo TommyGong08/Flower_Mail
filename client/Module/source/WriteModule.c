@@ -23,11 +23,11 @@ author：龚海龙
 
 
 //保存草稿到本地邮件###SaveSendFile(success)
-int SaveDraft(UserInfo* userInfo , char* text)
+int SaveDraft(char* UserName , char* text)
 {
    FILE* fp = NULL;
    char path[50];
-   sprintf(path,"../data/%s/draft/1.txt",userInfo->UserName);
+   sprintf(path,"../data/%s/draft/1.txt",UserName);
    printf("\n%s\n",path);
    fp = fopen(path,"w");
    if(fp==NULL){
@@ -41,12 +41,12 @@ int SaveDraft(UserInfo* userInfo , char* text)
 }
 
 //从本地草稿箱中导入草稿,存入text字符串中
-char*  LeadinDraft(UserInfo* userInfo)
+char*  LeadinDraft(char* UserName)
 {
   FILE* fp = NULL;
   char buffer[FILE_BUFFER_SIZE];
   char path[50];
-  sprintf(path,"../data/%s/draft/1.txt",userInfo->UserName);
+  sprintf(path,"../data/%s/draft/1.txt",UserName);
   printf("\n%s\n",path);
   fp = fopen(path,"r");
   if(fp == NULL){
@@ -64,10 +64,10 @@ char*  LeadinDraft(UserInfo* userInfo)
 }
 
 //从本地文件夹删除草稿
-int DeleteDraft(UserInfo* userInfo)
+int DeleteDraft(UserName)
 {
    char path[50];
-   sprintf(path, "../data/%s/draft/1.txt",userInfo->UserName);
+   sprintf(path, "../data/%s/draft/1.txt",UserName);
    if(remove(path) == 0){
       printf("remove draft success\n");
       return 0;
@@ -158,7 +158,11 @@ int SendAttachFile(char* emailID, char* attachFilePath)
 }
 
 //success
-int SendEmail(MailInfo*  EmailInfo, char* text)
+//int SendEmail(MailInfo*  EmailInfo, char* text)
+int SendEmail(char* EmailID,char* EmailTheme,char* EmailPath, char* EmailType,
+                             char* EmailState,char* CopySendID,char* SecretSendID,char* EmailSystemTime,
+                               char*  IfAttachFile, char* AttachFilePath,char* EmailSender,
+                                 char* EmailReceiver,char* text)
 {
    //要发送常规邮件、附件、抄送、密送
    	char* msg=NULL;
@@ -169,11 +173,9 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
  // memset(receBuffer, '\0', LONG_CONTENT_SIZE);
 	int length=0;
   int client_socket=0;
-   sprintf(buffer,"emailclitoser|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|",
-                                 EmailInfo->EmailID,EmailInfo->EmailTheme,EmailInfo->EmailPath,EmailInfo->EmailType,
-                                 EmailInfo->EmailState,EmailInfo->CopySendID,EmailInfo->SecretSendID,EmailInfo->EmailSystemTime,
-                                 EmailInfo->IfAttachFile,EmailInfo->EmailID,EmailInfo->AttachFilePath,EmailInfo->EmailSender,
-                                 EmailInfo->EmailReceiver,text);
+   sprintf(buffer,"emailclitoser|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|",EmailID,EmailTheme,EmailPath,
+                                                                                        EmailType,EmailState,CopySendID,SecretSendID,EmailSystemTime,
+                                                                                       IfAttachFile,EmailID,AttachFilePath,EmailSender,EmailReceiver,text);
   // sprintf(buffer,"emailclitoser|473829|debug123|../data/TommyGONG08|0|2|NULL|NULL|2020-9-14|1|473829|../data/TOmmyGONG08/attach|TommyGONG08|Mary|HELLO Mary! My name is Tom. Nice to meet you!|");
    printf ("string sended to server:%s\n",buffer);
 	client_socket= connect_socket(SERVER_IP,SERVER_PORT);  
@@ -190,8 +192,8 @@ int SendEmail(MailInfo*  EmailInfo, char* text)
    close_socket(client_socket);
    int send_attachfile = 0;
    //判断邮件类型，如果有附件
-   if(EmailInfo->IfAttachFile == 0){
-       send_attachfile = SendAttachFile(EmailInfo->EmailID,EmailInfo->AttachFilePath);
+   if(IfAttachFile == 0){
+       send_attachfile = SendAttachFile(EmailID,AttachFilePath);
        if(send_attachfile < 0){
           printf("send attached file Failed!\n");
           return -1;

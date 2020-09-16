@@ -4,7 +4,7 @@
 #include"ClientSocket.h"
 
 //检查注册信息是否合法
-int CheckRegisterInput(UserInfo* userInfo);
+int CheckRegisterInput(char* UserName, char* Password,char* Telephone);
 
 //将用户名信息拼接成符合SQL语句的字符串
 int SendUserIdToServer(char* UserId);
@@ -13,6 +13,6 @@ int SendUserIdToServer(char* UserId);
 int RecUserIdResFromServer();
 
 //把注册用户的所有信息发送给服务器
-int SendRegisterUserInfoToServer(UserInfo* userInfo);
+int SendRegisterUserInfoToServer(char* UserName,char* PassWord, char* LoginState,char* Telephone);
 
 #endif
