@@ -1,5 +1,5 @@
-#include"../include/Struct.h"
-#include"../include/ClientSocket.h"
+#include"Struct.h"
+#include"ClientSocket.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <errno.h>
+#include <arpa/inet.h>
 
 
 int connect_socket(char* server,int serverPort)
@@ -24,7 +25,7 @@ int connect_socket(char* server,int serverPort)
     //向系统注册，通知系统建立一个通信端口
     //AF_INET表示使用IPV4协议
     //SOCK_STREAM表示使用TCP协议
-    if( (sockfd=socket(AF_INET,SOCK_STREAM,0))<0 ){
+    if( (sockfd=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0 ){
 	    herror("Init socket erro\n");
 	    return -1;
     }

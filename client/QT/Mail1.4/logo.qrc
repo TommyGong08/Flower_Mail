@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>oasis</file>
+        <file>al_send_widget.cpp</file>
+    </qresource>
+</RCC>
