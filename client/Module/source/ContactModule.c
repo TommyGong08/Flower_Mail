@@ -16,5 +16,5 @@ int AddContact (char* UserID , char* ContactID)
 
 int DeleteContact (char* UserID,int ContactID)
 {
-
+    ///////
 }
